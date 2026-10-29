@@ -6,7 +6,7 @@
 /*   By: razaccar <razaccar@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 06:09:47 by razaccar          #+#    #+#             */
-/*   Updated: 2026/10/13 22:05:39 by razaccar         ###   ########.fr       */
+/*   Updated: 2026/10/29 22:18:55 by razaccar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ public class Main {
 
     private Flyable parseAircraft(String line) throws ScenarioException {
         String[] entry  = line.split(" ", 5);
+        if (entry.length != 5)
+            throw new ScenarioException("Invalid aircradft format [TYPE NAME LONGITUDE LATITUDE HEIGHT]");
 
         String[] types = { "Helicopter", "JetPlane", "Balloon" };
         for (int i = 0; i < types.length; i++) {
@@ -62,6 +64,8 @@ public class Main {
             return value;
         } catch (NumberFormatException e) {
             throw new ScenarioException("Failed to parse integer value: " + s, e);
+        } catch (NullPointerException e) {
+            throw new ScenarioException("No string to parse: ", e);
         }
     }
 
@@ -69,7 +73,9 @@ public class Main {
         String entry = null;
         int lineNumber = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(pathname, StandardCharsets.UTF_8))) {
-            iterations = parsePositiveInt(reader.readLine());
+            if ((entry = reader.readLine()) == null)
+                throw new ScenarioException("Empty file.");
+            iterations = parsePositiveInt(entry);
             lineNumber++;
             while ((entry = reader.readLine()) != null) {
                 aircrafts.add(parseAircraft(entry));
@@ -107,13 +113,13 @@ public class Main {
             System.err.println("Scenario loading failed.\n");
             System.err.println(e.getMessage());
             if (e.getCause() != null)
-                System.err.println("[ERROR] " + e.getCause().toString());
+                System.out.println("[ERROR] " + e.getCause().toString());
             return;
         } catch (SimulationException e) {
             System.err.println("Simulation execution failed.\n");
             System.err.println(e.getMessage());
             if (e.getCause() != null)
-                System.err.println("[ERROR] " + e.getCause().toString());
+                System.out.println("[ERROR] " + e.getCause().toString());
             return;
         }
     }

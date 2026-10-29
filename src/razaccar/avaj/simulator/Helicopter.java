@@ -6,7 +6,7 @@
 /*   By: razaccar <razaccar@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/29 16:50:37 by razaccar          #+#    #+#             */
-/*   Updated: 2026/10/13 21:48:19 by razaccar         ###   ########.fr       */
+/*   Updated: 2026/10/19 14:45:31 by razaccar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,36 +32,42 @@ public class Helicopter extends Aircraft {
         boolean landed = false;
 
         String weather = weatherTower.getWeather(coordinates);
-        switch(weather) {
-            case "SUN":
-                message = "Ciel ensoleillé, je prends de la hauteur.";
-                longitude = coordinates.getLongitude() + 10;
-                latitude = coordinates.getLatitude();
-                height = coordinates.getHeight() + 2;
-                break;
-            case "FOG":
-                message = "Vision trouble, attention!";
-                longitude = coordinates.getLongitude() + 1;
-                latitude = coordinates.getLatitude();
-                height = coordinates.getHeight();
-                break;
-            case "RAIN":
-                message = "J'active les essuie-glaces.";
-                longitude = coordinates.getLongitude() + 5;
-                latitude = coordinates.getLatitude();
-                height = coordinates.getHeight();
-                break;
-            case "SNOW":
-                message = "Il neige, je reduis l'altitude.";
-                longitude = coordinates.getLongitude();
-                latitude = coordinates.getLatitude();
-                height = coordinates.getHeight() - 12;
-                break;
-            default:
-                throw new SimulationException("Unknown weather type: " + weather);
+        try {
+            switch(weather) {
+                case "SUN":
+                    message = "Ciel ensoleillé, je prends de la hauteur.";
+                    longitude = Math.addExact(coordinates.getLongitude(), 10);
+                    latitude = coordinates.getLatitude();
+                    height = Math.addExact(coordinates.getHeight(), 2);
+                    break;
+                case "FOG":
+                    message = "Vision trouble, attention!";
+                    longitude = Math.addExact(coordinates.getLongitude(), 1);
+                    latitude = coordinates.getLatitude();
+                    height = coordinates.getHeight();
+                    break;
+                case "RAIN":
+                    message = "J'active les essuie-glaces.";
+                    longitude = Math.addExact(coordinates.getLongitude(), 5);
+                    latitude = coordinates.getLatitude();
+                    height = coordinates.getHeight();
+                    break;
+                case "SNOW":
+                    message = "Il neige, je reduis l'altitude.";
+                    longitude = coordinates.getLongitude();
+                    latitude = coordinates.getLatitude();
+                    height = Math.subtractExact(coordinates.getHeight(), 12);
+                    break;
+                default:
+                    throw new SimulationException("Unknown weather type: " + weather);
+            }
+        } catch (ArithmeticException e) {
+            throw new SimulationException("min or max coordinate value reached.", e);
         }
-        if (height <= 0)
+        if (height <= 0) {
+            height = 0;
             landed = true;
+        }
         if (height > 100)
             height = 100;
 

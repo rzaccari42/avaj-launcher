@@ -6,7 +6,7 @@
 /*   By: razaccar <razaccar@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 06:10:02 by razaccar          #+#    #+#             */
-/*   Updated: 2026/10/13 20:50:23 by razaccar         ###   ########.fr       */
+/*   Updated: 2026/10/19 14:07:48 by razaccar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public class Tower {
         } catch (IOException e) {
             throw new SimulationException("Failed to write simulation output.", e);
         }
+        if (observers.contains(flyable)) return;
         observers.add(flyable);
     }
 
